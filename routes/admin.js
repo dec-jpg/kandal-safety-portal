@@ -58,7 +58,7 @@ r.get('/dashboard', view, async (req, res) => {
       ORDER BY o.full_name, t.sort`)).rows;
   const jobs = (await q(`SELECT j.id, j.ref, j.name,
       (SELECT COUNT(*)::int FROM job_operatives jo JOIN operatives o ON o.id = jo.operative_id AND o.active WHERE jo.job_id = j.id) AS team,
-      (SELECT COUNT(*)::int FROM documents d WHERE d.job_id = j.id AND d.current AND d.requires_signoff) AS docs,
+      (SELECT COUNT(*)::int FROM documents d WHERE d.job_id = j.id AND d.current AND d.kind = 'rams') AS docs,
       (SELECT COUNT(*)::int FROM job_operatives jo JOIN operatives o ON o.id = jo.operative_id AND o.active
          JOIN documents d ON d.job_id = jo.job_id AND d.current AND d.requires_signoff
          WHERE jo.job_id = j.id AND NOT EXISTS (SELECT 1 FROM signoffs s WHERE s.document_id = d.id AND s.operative_id = jo.operative_id)) AS outstanding
