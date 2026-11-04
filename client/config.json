@@ -706,13 +706,41 @@
       ]
     },
     {
-      "name": "George O'Sullivan",
+      "name": "Richard Hopkins",
       "role": "Joiner",
       "quals": [
         {
           "type": "CSCS card",
-          "number": "14220249",
-          "expires_on": "2028-04-30"
+          "number": "1752719",
+          "expires_on": "2027-02-28"
+        },
+        {
+          "type": "NVQ Level 2 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "Joe Smalley",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "02465546",
+          "expires_on": "2030-10-31"
+        },
+        {
+          "type": "NVQ Level 3 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "Craig Atherton",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "1329701",
+          "expires_on": "2027-06-30"
         },
         {
           "type": "NVQ Level 3 Site Carpentry"
@@ -727,6 +755,9 @@
           "type": "CSCS card",
           "number": "02230689",
           "expires_on": "2028-01-31"
+        },
+        {
+          "type": "NVQ Level 2 Site Carpentry"
         }
       ]
     },
@@ -752,17 +783,20 @@
           "type": "CSCS card",
           "number": "13980843",
           "expires_on": "2027-03-31"
+        },
+        {
+          "type": "NVQ Level 2 Site Carpentry"
         }
       ]
     },
     {
-      "name": "Mike Williams",
+      "name": "Harrison Wroe",
       "role": "Joiner",
       "quals": [
         {
           "type": "CSCS card",
-          "number": "810175",
-          "expires_on": "2025-09-30"
+          "number": "13545848",
+          "expires_on": "2030-10-31"
         },
         {
           "type": "NVQ Level 3 Site Carpentry"
@@ -770,16 +804,13 @@
       ]
     },
     {
-      "name": "Richard Hopkins",
-      "role": "Joiner",
+      "name": "Mike Williams",
+      "role": "Labourer",
       "quals": [
         {
           "type": "CSCS card",
-          "number": "1752719",
-          "expires_on": "2027-02-28"
-        },
-        {
-          "type": "NVQ Level 2 Site Carpentry"
+          "number": "810175",
+          "expires_on": "2027-11-30"
         }
       ]
     },
@@ -794,6 +825,20 @@
         },
         {
           "type": "NVQ Level 2 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "Mark Gill",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "548972",
+          "expires_on": "2031-09-30"
+        },
+        {
+          "type": "NVQ Level 3 Site Carpentry"
         }
       ]
     },
@@ -830,13 +875,13 @@
       ]
     },
     {
-      "name": "Connal Gallagher",
+      "name": "James Summers",
       "role": "Joiner",
       "quals": [
         {
           "type": "CSCS card",
-          "number": "881071",
-          "expires_on": "2026-12-31"
+          "number": "13370025",
+          "expires_on": "2027-05-31"
         },
         {
           "type": "NVQ Level 2 Site Carpentry"
@@ -844,13 +889,133 @@
       ]
     },
     {
+      "name": "Daniel Payne",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "13279893",
+          "expires_on": "2030-09-30"
+        },
+        {
+          "type": "NVQ Level 3 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "Simon Henshall",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "3017413",
+          "expires_on": "2028-05-31"
+        },
+        {
+          "type": "NVQ Level 3 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "Sam Taylor",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "1396978",
+          "expires_on": "2031-01-31"
+        },
+        {
+          "type": "NVQ Level 2 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "James Copland",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "2110604",
+          "expires_on": "2028-10-31"
+        },
+        {
+          "type": "NVQ Level 3 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "Matthew Woolham",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "2090212",
+          "expires_on": "2028-08-31"
+        },
+        {
+          "type": "NVQ Level 3 Site Carpentry"
+        }
+      ]
+    },
+    {
       "name": "Charles Tighe",
-      "role": "Apprentice Joiner",
+      "role": "Joiner",
       "quals": [
         {
           "type": "CSCS card",
           "number": "13628917",
-          "expires_on": "2026-06-30"
+          "expires_on": "2031-06-30"
+        },
+        {
+          "type": "NVQ Level 2 Site Carpentry"
+        }
+      ]
+    },
+    {
+      "name": "Mark Huyton",
+      "role": "Labourer",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "1098077",
+          "expires_on": "2029-01-31"
+        }
+      ]
+    },
+    {
+      "name": "Aaron Huyton",
+      "role": "Labourer",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "13391660",
+          "expires_on": "2028-12-31"
+        }
+      ]
+    },
+    {
+      "name": "George Walsh",
+      "role": "Joiner (provisional card)",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "6316709",
+          "expires_on": "2026-12-31"
+        }
+      ]
+    },
+    {
+      "name": "James Stack",
+      "role": "Joiner",
+      "quals": [
+        {
+          "type": "CSCS card",
+          "number": "80510",
+          "expires_on": "2027-05-31"
+        },
+        {
+          "type": "NVQ Level 3 Site Carpentry"
         }
       ]
     },
@@ -867,11 +1032,7 @@
           "type": "NVQ Level 3 Site Carpentry"
         }
       ]
-    },
-    {
-      "name": "Kieron Lawrence",
-      "role": "Director",
-      "quals": []
     }
-  ]
+  ],
+  "matrix_version": "SMAS Training Matrix - September 2026"
 }
