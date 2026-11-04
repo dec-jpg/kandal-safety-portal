@@ -1032,7 +1032,37 @@
           "type": "NVQ Level 3 Site Carpentry"
         }
       ]
+    },
+    {
+      "name": "Kieron Lawrence",
+      "role": "Director",
+      "quals": []
     }
   ],
-  "matrix_version": "SMAS Training Matrix - September 2026"
+  "matrix_version": "SMAS Training Matrix - September 2026 + director",
+  "packs": [
+    {
+      "name": "Company Policies",
+      "ref": "KJ-POL",
+      "client": "Kandal Joinery Ltd",
+      "team": "everyone",
+      "notes": "Company policies for reading and sign-off. Issued by Safety Simplified Ltd.",
+      "documents": [
+        {
+          "title": "Health and Safety Policy",
+          "reference": "KJ-HSP-2026",
+          "revision": "1",
+          "kind": "other",
+          "file": "Kandal Joinery Ltd - Health and Safety Policy August 2026 Rev 1.pdf"
+        },
+        {
+          "title": "Company Policies 2026",
+          "reference": "KJ-POL-2026",
+          "revision": "2026",
+          "kind": "other",
+          "file": "Kandal Joinery Ltd - Company Policies 2026.pdf"
+        }
+      ]
+    }
+  ]
 }
