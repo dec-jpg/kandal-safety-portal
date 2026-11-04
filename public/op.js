@@ -171,20 +171,25 @@ const BRAND = {};
     head(pack.job.name, ['Job pack', pack.job.ref].filter(Boolean).join(' · '));
     const docs = pack.documents;
     const toSign = docs.filter(d => d.requires_signoff && !d.signed).length;
-    const KIND = { rams: 'RAMS', permit: 'Permit', plan: 'Drawing / plan', other: 'Document' };
+    const KIND = { rams: 'RAMS', permit: 'Permit', plan: 'Drawing / plan', other: 'Document', briefing: 'Site briefing' };
     render(`${whoBar()}
       ${docs.length ? (toSign ? `<div class="note warn">${toSign} document${toSign === 1 ? '' : 's'} to read and sign.</div>` : '<div class="note ok">You have signed everything for this job.</div>') : '<div class="note info">No documents have been added to this job yet.</div>'}
       ${docs.map(d => `<div class="doc-card ${!d.requires_signoff ? 'info' : d.signed ? 'done' : ''}"><div><span class="k">${KIND[d.kind] || 'Document'}${d.revision ? ` · rev ${esc(d.revision)}` : ''}</span><b>${esc(d.title)}</b>
           ${d.requires_signoff ? (d.signed ? '<span class="pill yes">Signed</span>' : '<span class="pill no">Not signed</span>') : '<span class="pill grey">Read only</span>'}</div>
-        ${d.requires_signoff && !d.signed ? `<button class="btn" data-doc="${d.id}">Read &amp; sign</button>` : `<a class="btn ghost" href="/api/p/j/${TOKEN}/doc/${d.id}" target="_blank" rel="noopener">Open</a>`}</div>`).join('')}`);
+        ${d.requires_signoff && !d.signed ? `<button class="btn" data-doc="${d.id}">${d.content ? 'Read &amp; confirm' : 'Read &amp; sign'}</button>` : d.content ? '' : `<a class="btn ghost" href="/api/p/j/${TOKEN}/doc/${d.id}" target="_blank" rel="noopener">Open</a>`}</div>`).join('')}`);
     app.querySelectorAll('[data-doc]').forEach(b => (b.onclick = () => signDoc(docs.find(d => String(d.id) === b.dataset.doc))));
   }
 
   function signDoc(d) {
-    render(`${whoBar()}<h1>${esc(d.title)}</h1><p class="muted">${[d.reference, d.revision && `Revision ${d.revision}`].filter(Boolean).map(esc).join(', ')}</p>
-      <a class="btn big ghost" href="/api/p/j/${TOKEN}/doc/${d.id}" target="_blank" rel="noopener" id="open">Open the document</a>
+    const rams = d.content ? (pack.documents || []).find(x => x.kind === 'rams') : null;
+    render(`${whoBar()}<h1>${esc(d.title)}</h1><p class="muted">${[d.reference, d.revision && `Issue ${d.revision}`].filter(Boolean).map(esc).join(', ')}</p>
+      ${d.content ? `<div class="ind-section"><div class="body">${esc(d.content)}</div></div>
+        ${rams ? `<a class="btn big ghost" href="/api/p/j/${TOKEN}/doc/${rams.id}" target="_blank" rel="noopener">Open the full RAMS</a>` : ''}
+        <p class="small muted" style="margin:.6rem 0 1.2rem">If anything about this site is unclear, ask your supervisor before you start.</p>
+        <label class="check" style="margin-bottom:1rem"><input type="checkbox" id="ok"> I have been briefed on this site, have read the RAMS and will work to them.</label>`
+      : `<a class="btn big ghost" href="/api/p/j/${TOKEN}/doc/${d.id}" target="_blank" rel="noopener" id="open">Open the document</a>
       <p class="small muted" style="margin:.6rem 0 1.2rem">Read it all the way through. If anything is unclear, ask your supervisor before you start.</p>
-      <label class="check" style="margin-bottom:1rem"><input type="checkbox" id="ok"> I have read and understood this document and will work to it.</label>
+      <label class="check" style="margin-bottom:1rem"><input type="checkbox" id="ok"> I have read and understood this document and will work to it.</label>`}
       ${sigBlock}<button class="btn big" id="go">Sign</button>
       <p class="link-row"><button class="btn quiet" id="back">Back to the job pack</button></p>`);
     const pad = wireSig();
@@ -193,7 +198,7 @@ const BRAND = {};
       if (!$('#ok').checked) return showErr('Tick the box to confirm you have read it.');
       if (pad.empty()) return showErr('Sign in the box first.');
       const btn = $('#go'); busy(btn, true, 'Sending');
-      try { await api(`/j/${TOKEN}/doc/${d.id}/sign`, { signature: pad.data() }); done('Signed', `${d.title} is signed.`); }
+      try { await api(`/j/${TOKEN}/doc/${d.id}/sign`, { signature: pad.data() }); done(d.content ? 'Briefed' : 'Signed', d.content ? 'Your site briefing is recorded. Thanks.' : `${d.title} is signed.`); }
       catch (e) { busy(btn, false); showErr(e.message); }
     };
   }

@@ -17,7 +17,15 @@ async function findOperative(name, phone, tok) {
   }
   const p = normPhone(phone);
   if (p.length < 10 || !name) return null;
-  return (await q('SELECT * FROM operatives WHERE phone = $1 AND active', [p])).rows.find(o => surname(o.full_name) === surname(name)) || null;
+  const byPhone = (await q('SELECT * FROM operatives WHERE phone = $1 AND active', [p])).rows.find(o => surname(o.full_name) === surname(name));
+  if (byPhone) return byPhone;
+  // First time on a phone: an exact, unique name match on the register with no mobile on file yet is taken as them, and the mobile is kept.
+  const byName = (await q('SELECT * FROM operatives WHERE LOWER(full_name) = LOWER($1) AND active', [clean(name, 120)])).rows;
+  if (byName.length === 1 && !byName[0].phone) {
+    await q('UPDATE operatives SET phone = $1 WHERE id = $2', [p, byName[0].id]);
+    return { ...byName[0], phone: p };
+  }
+  return null;
 }
 
 function who(req) {
@@ -97,8 +105,8 @@ r.get('/j/:token', async (req, res) => {
   if (!j) return res.status(404).json({ error: 'This job pack link is not active. Ask the office for the current link.' });
   const w = who(req);
   const op = await findOperative(w.name, w.phone, w.tok);
-  const docs = (await q(`SELECT id, kind, title, reference, revision, requires_signoff, file_name, created_at FROM documents
-      WHERE job_id = $1 AND current ORDER BY CASE kind WHEN 'rams' THEN 0 WHEN 'permit' THEN 1 WHEN 'plan' THEN 2 ELSE 3 END, title`, [j.id])).rows;
+  const docs = (await q(`SELECT id, kind, title, reference, revision, requires_signoff, file_name, content, created_at FROM documents
+      WHERE job_id = $1 AND current ORDER BY CASE kind WHEN 'briefing' THEN 0 WHEN 'rams' THEN 1 WHEN 'permit' THEN 2 WHEN 'plan' THEN 3 ELSE 4 END, title`, [j.id])).rows;
   for (const d of docs) d.signed = d.requires_signoff ? await alreadySigned('document_id', d.id, op, w) : null;
   res.json({ job: { name: j.name, ref: j.ref, address: j.address, client: j.client }, documents: docs });
 });

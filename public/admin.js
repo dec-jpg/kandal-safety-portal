@@ -122,6 +122,7 @@
     jobs: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/>',
     talks: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/>',
     unmatched: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    ramsmaster: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/>',
     settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     users: '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/>',
   };
@@ -129,10 +130,10 @@
     ['Overview'], ['', 'Dashboard'],
     ['People'], ['operatives', '{Ops}'], ['matrix', 'Training matrix'],
     ['Site work'], ['jobs', 'Jobs & RAMS'], ['talks', 'Toolbox talks'], ['unmatched', 'Signatures to match'],
-    ['Admin', 'admin'], ['users', 'Users', 'admin'], ['settings', 'Safety Simplified', 'owner'],
+    ['Admin', 'admin'], ['users', 'Users', 'admin'], ['ramsmaster', 'RAMS master', 'owner'], ['settings', 'Safety Simplified', 'owner'],
   ];
   const CRUMB = { '': 'Health & safety overview', operatives: 'Your {ops} and their details', matrix: 'Cards, tickets and expiry dates', jobs: 'RAMS, drawings and sign-off per job',
-    talks: 'Issue, sign and track', unmatched: 'Signatures from people not on the register', settings: 'Training list and account settings', users: 'Office logins' };
+    talks: 'Issue, sign and track', unmatched: 'Signatures from people not on the register', settings: 'Training list and account settings', users: 'Office logins', ramsmaster: 'The company method statement, risk assessments and COSHH that every site RAMS is built from' };
 
   function shell() {
     const allowed = r => !r || (r === 'owner' ? isOwner() : isAdmin());
@@ -168,7 +169,7 @@
     document.getElementById('vt').textContent = tx(nav ? nav[1] : 'Dashboard');
     document.getElementById('vc').textContent = tx(`${brand.name} · ${CRUMB[view || ''] || ''}`);
     window.scrollTo(0, 0);
-    const views = { '': dashboard, operatives, matrix: matrixView, jobs: jobsView, talks: talksView, unmatched, settings, users };
+    const views = { '': dashboard, operatives, matrix: matrixView, jobs: jobsView, talks: talksView, unmatched, settings, users, ramsmaster: ramsMaster };
     setMain('<p class="muted">Loading</p>');
     (views[view] || dashboard)(params, id).catch(e => setMain(`<div class="note err">${esc(e.message)}</div>`));
     updateCounts();
@@ -384,7 +385,7 @@
   }
 
   // ---------- jobs, RAMS and site packs ----------
-  const KIND = { rams: 'RAMS', permit: 'Permit', plan: 'Drawing / plan', other: 'Other' };
+  const KIND = { rams: 'RAMS', permit: 'Permit', plan: 'Drawing / plan', other: 'Other', briefing: 'Site briefing' };
 
   async function jobsView(params, id) {
     if (id) return jobDetail(id);
@@ -426,17 +427,24 @@
     const signable = cur.filter(x => x.requires_signoff);
     const signed = (docId, opId) => d.signoffs.find(s => s.document_id === docId && s.operative_id === opId);
     const others = d.signoffs.filter(s => cur.some(x => x.id === s.document_id) && (!s.operative_id || !d.team.some(t => t.id === s.operative_id)));
+    const rams = await api(`/rams/jobs/${j.id}`);
+    const liveRams = rams.rows.find(x => x.status === 'issued');
     setMain(`<p class="no-print"><a href="#/jobs">Back to jobs</a></p>
       <div class="ad-head"><div><h1>${esc(j.name)}</h1><p class="muted">${[j.ref, j.client, j.address].filter(Boolean).map(esc).join(' · ')}${j.status === 'complete' ? ' · <span class="pill grey">complete</span>' : ''}</p></div>
-        ${canEdit() ? '<div class="no-print" style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn ghost" id="ed">Edit job</button><button class="btn ghost" id="tm">Choose team</button><button class="btn" id="up">Upload document</button></div>' : ''}</div>
-      ${j.status === 'live' ? `<div class="panel no-print"><h2>Job pack link</h2><p class="small muted">Send this to the lads on the job. They open it, read each RAMS and sign it on their phone. When a RAMS is updated, upload the new revision and everyone is asked to sign again.</p>
+        ${canEdit() ? `<div class="no-print" style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn ghost" id="ed">Edit job</button><button class="btn ghost" id="tm">Choose team</button><button class="btn ghost" id="up">Upload document</button>${rams.defaults ? `<button class="btn" id="nr">${liveRams ? 'Revise RAMS' : 'New RAMS'}</button>` : ''}</div>` : ''}</div>
+      ${rams.defaults ? `<div class="panel"><h2>RAMS</h2>${liveRams ? `<p><b>${esc(liveRams.ref || '')} Issue ${liveRams.issue_no}</b> issued ${fDate(liveRams.issue_date)} by ${esc(liveRams.created_by || '')}, from company RAMS master v${liveRams.master_version}.
+          <a href="/api/admin/documents/${liveRams.document_id}/file" target="_blank" rel="noopener">Open the PDF</a> · <a href="/api/admin/documents/${liveRams.document_id}/file?download=1">Download</a></p>
+          <p class="small muted">Site briefing confirmed by ${liveRams.briefed} ${liveRams.briefed === 1 ? 'person' : 'people'}. The lads confirm it from the job pack link when they start on site, and that puts them on the team.</p>
+          ${rams.rows.length > 1 ? `<details><summary class="small muted">Earlier issues (${rams.rows.length - 1})</summary><ul class="small">${rams.rows.filter(x => x.status !== 'issued').map(x => `<li>Issue ${x.issue_no}, ${fDate(x.issue_date)}, master v${x.master_version} <a href="/api/admin/documents/${x.document_id}/file" target="_blank" rel="noopener">PDF</a></li>`).join('')}</ul></details>` : ''}`
+        : `<p class="muted">No RAMS issued for this job from the portal yet.${canEdit() ? ' Use New RAMS: the site details are filled in from the job, you add anything site-specific, and the PDF is made from the company RAMS master.' : ''}</p>`}</div>` : ''}
+      ${j.status === 'live' ? `<div class="panel no-print"><h2>Job pack link</h2><p class="small muted">${liveRams ? 'Send this to the lads on the job. They open it, read the site briefing and the RAMS, and confirm on their phone; that puts them on this job\'s team. Revise the RAMS and everyone is asked to confirm the new briefing.' : 'Send this to the lads on the job. They open it, read each RAMS and sign it on their phone. When a RAMS is updated, upload the new revision and everyone is asked to sign again.'}</p>
         ${shareBox(j.url, `/api/admin/jobs/${j.id}/qr.svg`, `${j.name}: please read and sign the RAMS for this job before you start.`)}</div>` : ''}
       <h2>Documents</h2>
       <div class="tablewrap">${cur.length ? `<table><thead><tr><th>Document</th><th>Type</th><th>Revision</th><th>Signatures</th><th>Uploaded</th><th></th></tr></thead><tbody>
-        ${cur.map(x => `<tr><td><a href="/api/admin/documents/${x.id}/file" target="_blank" rel="noopener"><b>${esc(x.title)}</b></a>${x.reference ? ` <span class="small muted">${esc(x.reference)}</span>` : ''}</td>
+        ${cur.map(x => `<tr><td>${x.has_content ? `<b>${esc(x.title)}</b>` : `<a href="/api/admin/documents/${x.id}/file" target="_blank" rel="noopener"><b>${esc(x.title)}</b></a>`}${x.reference ? ` <span class="small muted">${esc(x.reference)}</span>` : ''}</td>
           <td>${KIND[x.kind] || x.kind}</td><td>${esc(x.revision || '')}</td><td>${x.requires_signoff ? x.signed : '<span class="small muted">Read only</span>'}</td>
           <td class="small">${fDate(x.created_at)}<br><span class="muted">${esc(x.uploaded_by || '')}</span></td>
-          <td class="no-print">${canEdit() ? `<button class="btn small quiet" data-rev="${x.id}">New revision</button><button class="btn small quiet" data-doc="${x.id}">Edit</button>` : ''}</td></tr>`).join('')}</tbody></table>`
+          <td class="no-print">${canEdit() && !x.has_content && !(liveRams && x.id === liveRams.document_id) ? `<button class="btn small quiet" data-rev="${x.id}">New revision</button><button class="btn small quiet" data-doc="${x.id}">Edit</button>` : liveRams && x.id === liveRams.document_id ? '<span class="small muted">Made by the portal</span>' : ''}</td></tr>`).join('')}</tbody></table>`
         : '<div class="empty"><b>No documents yet.</b>Upload the RAMS for this job, plus any drawings or permits the lads need.</div>'}</div>
       <h2>Sign-off register</h2>
       ${d.team.length && signable.length ? `<div class="tablewrap"><table class="matrix signmatrix"><thead><tr><th>Team</th>${signable.map(x => `<th class="rot"><div>${esc(x.title)}${x.revision ? ` rev ${esc(x.revision)}` : ''}</div></th>`).join('')}</tr></thead><tbody>
@@ -450,9 +458,34 @@
     if (!canEdit()) return;
     document.getElementById('ed').onclick = () => editJob(j);
     document.getElementById('up').onclick = () => uploadDoc(j);
+    if (document.getElementById('nr')) document.getElementById('nr').onclick = () => newRams(j, rams, liveRams);
     document.getElementById('tm').onclick = () => chooseTeam(j, d.team);
     main().querySelectorAll('[data-rev]').forEach(b => (b.onclick = () => uploadDoc(j, cur.find(x => String(x.id) === b.dataset.rev))));
     main().querySelectorAll('[data-doc]').forEach(b => (b.onclick = () => editDoc(cur.find(x => String(x.id) === b.dataset.doc))));
+  }
+
+  function newRams(j, rams, prev) {
+    const d = rams.defaults, f = prev ? prev.fields : {};
+    const my = iso => (iso ? new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : '');
+    const ta = (id, value, rows = 3) => `<textarea id="${id}" rows="${rows}">${esc(value ?? '')}</textarea>`;
+    openDlg(prev ? `Revise RAMS: Issue ${prev.issue_no + 1}` : 'New RAMS', `
+      <p class="muted">The method statement, risk assessments and COSHH come from the company RAMS master (v${d.master_version}). Fill in the site sheet; the PDF is made when you issue.</p>
+      <div class="row">${field('Project', input('project', f.project || j.name))}${field('Client', input('client', f.client || j.client || ''))}</div>
+      ${field('Address', input('address', f.address || j.address || ''))}
+      <div class="row">${field('Start', input('start_text', f.start_text || my(j.start_on)))}${field('End', input('end_text', f.end_text || 'TBC'))}</div>
+      <div class="row">${field('Author', input('author', f.author || d.author || ''))}${field('Reviewer', input('reviewer', f.reviewer || d.reviewer || ''))}</div>
+      <div class="row">${field('Emergency contact', ta('emergency_contact', f.emergency_contact || d.emergency_contact || '', 2))}${field('Site supervisor', input('site_supervisor', f.site_supervisor || d.site_supervisor || ''))}</div>
+      ${field('Scope of work', ta('scope', f.scope || d.scope || '', 2))}
+      ${field('Site-specific arrangements', ta('site_notes', f.site_notes || '', 5), 'access, welfare, PC rules, anything this site needs beyond the master; leave blank if nothing')}
+      <div class="row">${field('Ref', input('ref', prev ? prev.ref : d.ref || ''))}${field('Issue no', input('issue_no', rams.next_issue || (prev ? prev.issue_no + 1 : 1), 'number'))}${field('Issue date', input('issue_date', new Date().toISOString().slice(0, 10), 'date'))}</div>
+      ${prev ? '<p class="small muted">Issuing marks the current RAMS as superseded and gives the lads a fresh site briefing to confirm.</p>' : ''}`,
+    '<button class="btn" id="save">Issue RAMS</button>');
+    $d('#save').onclick = async () => {
+      const body = {}; ['project', 'client', 'address', 'start_text', 'end_text', 'author', 'reviewer', 'emergency_contact', 'site_supervisor', 'scope', 'site_notes', 'ref', 'issue_no', 'issue_date'].forEach(k => (body[k] = val('#' + k)));
+      const btn = $d('#save'); btn.disabled = true; btn.textContent = 'Making the PDF';
+      try { await api(`/rams/jobs/${j.id}`, { body }); dlg.close(); bust(); flash('RAMS issued.'); route(); }
+      catch (e) { btn.disabled = false; btn.textContent = 'Issue RAMS'; dlgErr(e.message); }
+    };
   }
 
   function uploadDoc(j, prev) {
@@ -655,6 +688,59 @@
   }
 
   // ---------- settings ----------
+  // ---------- RAMS master (Safety Simplified) ----------
+  const blocksToText = blocks => (blocks || []).map(b => (b.t === 'h' ? `## ${b.text}` : b.t === 'b' ? `- ${b.text}` : b.text)).join('\n');
+  const textToBlocks = text => String(text || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => (/^##\s*/.test(l) ? { t: 'h', text: l.replace(/^##\s*/, '') } : /^[-•*]\s*/.test(l) ? { t: 'b', text: l.replace(/^[-•*]\s*/, '') } : { t: 'p', text: l }));
+  async function ramsMaster() {
+    if (!isOwner()) return setMain('<div class="note warn">This page is for Safety Simplified.</div>');
+    const d = await api('/rams/master');
+    if (!d.master) return setMain('<div class="note warn">No RAMS master in this portal yet. It comes from the build (client/rams-master.json).</div>');
+    const m = d.master.body, df = m.defaults || {};
+    const ta = (id, value, rows) => `<textarea id="${id}" rows="${rows}" style="font-family:var(--mono);font-size:12px">${esc(value ?? '')}</textarea>`;
+    const risk = (r, i) => `<tr data-risk="${i}"><td><textarea rows="3">${esc(r.activity)}</textarea></td><td><textarea rows="3">${esc(r.hazards)}</textarea></td>
+      <td><input type="number" min="1" max="3" value="${r.likelihood}"></td><td><input type="number" min="1" max="3" value="${r.severity}"></td>
+      <td><textarea rows="3">${esc(r.controls)}</textarea></td><td><input value="${esc(r.by_whom)}"></td><td><input type="number" min="1" max="9" value="${r.residual}"></td>
+      <td><textarea rows="3">${esc(r.persons)}</textarea></td><td><button class="btn small quiet" data-del>Remove</button></td></tr>`;
+    const coshh = (c, i) => `<div class="panel" data-coshh="${i}"><div class="row">${field('Substance', `<input class="c-sub" value="${esc(c.substance)}">`)}${field('Hazard symbols', `<input class="c-sym" value="${esc((c.symbols || []).join(', '))}">`, 'comma separated')}</div>
+      ${field('Health risks', `<textarea class="c-hr" rows="3">${esc(c.health_risks)}</textarea>`)}${field('First aid and emergency', `<textarea class="c-fa" rows="3">${esc(c.first_aid)}</textarea>`)}
+      ${field('PPE and control requirements', `<textarea class="c-ct" rows="3">${esc(c.controls)}</textarea>`)}${field('Review', `<textarea class="c-rv" rows="2">${esc(c.review)}</textarea>`)}
+      <p><button class="btn small quiet" data-del>Remove substance</button></p></div>`;
+    setMain(`<div class="ad-head"><div><p class="muted">Version ${d.master.version}, ${esc(d.master.created_by || '')}, ${fDate(d.master.created_at)}. Saving makes a new version; RAMS already issued keep the version they were made from, and the next issue on any site uses the new one.</p></div>
+        <button class="btn" id="save">Save as version ${d.master.version + 1}</button></div>
+      <div class="panel"><h2>Site sheet defaults</h2><p class="small muted">Pre-filled on every new RAMS; can be changed per site.</p>
+        <div class="row">${field('Ref', input('m-ref', m.ref || ''))}${field('Author', input('m-author', df.author || ''))}${field('Reviewer', input('m-reviewer', df.reviewer || ''))}</div>
+        <div class="row">${field('Emergency contact', `<textarea id="m-ec" rows="2">${esc(df.emergency_contact || '')}</textarea>`)}${field('Site supervisor', input('m-sup', df.site_supervisor || ''))}${field('Review period (months)', input('m-rev', df.review_months || 12, 'number'))}</div>
+        ${field('Scope of work', `<textarea id="m-scope" rows="2">${esc(df.scope || '')}</textarea>`)}</div>
+      <div class="panel"><h2>Method statement</h2><p class="small muted">One box per section. Lines starting with <code>- </code> are bullets, lines starting with <code>## </code> are sub-headings, anything else is a paragraph.</p>
+        <div id="secs">${m.sections.map((sec, i) => `<div data-sec="${i}">${field(`<input class="sec-label" value="${esc(sec.label)}" style="font-weight:700;max-width:360px">`, ta('sec-' + i, blocksToText(sec.blocks), Math.min(18, Math.max(3, sec.blocks.length + 1))))}<p class="small"><button class="btn small quiet" data-del>Remove section</button></p></div>`).join('')}</div>
+        <button class="btn ghost small" id="addsec">Add section</button></div>
+      <div class="panel"><h2>Risk assessments</h2><p class="small muted">Risk rating is likelihood × severity (1 to 3 each).</p>
+        <div class="tablewrap" style="box-shadow:none"><table class="risk-edit"><thead><tr><th>Activity</th><th>Hazards</th><th>L</th><th>S</th><th>Controls</th><th>By whom</th><th>Residual</th><th>Persons at risk</th><th></th></tr></thead><tbody id="risks">${m.risks.map(risk).join('')}</tbody></table></div>
+        <button class="btn ghost small" id="addrisk">Add risk</button></div>
+      <div class="panel"><h2>COSHH assessments</h2><div id="coshh">${(m.coshh || []).map(coshh).join('')}</div><button class="btn ghost small" id="addcoshh">Add substance</button></div>
+      <div class="panel"><h2>Sign-off wording</h2>${field('Principal contractor sign-off', `<textarea id="m-pc" rows="4">${esc(m.pc_signoff_text || '')}</textarea>`)}${field('Operative sign-off', `<textarea id="m-op" rows="6">${esc(m.operative_signoff_text || '')}</textarea>`)}</div>
+      ${field('Note for this version', input('m-note', ''), 'what changed, for the record')}
+      <p><button class="btn" id="save2">Save as version ${d.master.version + 1}</button></p>`);
+    const mainEl = main();
+    const wire = () => mainEl.querySelectorAll('[data-del]').forEach(b => (b.onclick = () => { b.closest('[data-sec],[data-risk],[data-coshh]').remove(); }));
+    wire();
+    document.getElementById('addsec').onclick = () => { const i = Date.now(); document.getElementById('secs').insertAdjacentHTML('beforeend', `<div data-sec="${i}">${field(`<input class="sec-label" value="" placeholder="Section heading" style="font-weight:700;max-width:360px">`, ta('sec-' + i, '', 4))}<p class="small"><button class="btn small quiet" data-del>Remove section</button></p></div>`); wire(); };
+    document.getElementById('addrisk').onclick = () => { document.getElementById('risks').insertAdjacentHTML('beforeend', risk({ activity: '', hazards: '', likelihood: 2, severity: 3, controls: '', by_whom: 'Con', residual: 2, persons: 'Employee' }, Date.now())); wire(); };
+    document.getElementById('addcoshh').onclick = () => { document.getElementById('coshh').insertAdjacentHTML('beforeend', coshh({ substance: '', symbols: [], health_risks: '', first_aid: '', controls: '', review: 'Please see Health and Safety Data sheet. This COSHH Assessment will be reviewed annually or when the product, task or conditions change.' }, Date.now())); wire(); };
+    const save = async () => {
+      const body = { ...m, title: m.title, ref: v('m-ref'),
+        defaults: { author: v('m-author'), reviewer: v('m-reviewer'), emergency_contact: v('m-ec'), site_supervisor: v('m-sup'), review_months: Number(v('m-rev')) || 12, scope: v('m-scope') },
+        sections: [...mainEl.querySelectorAll('[data-sec]')].map(el => ({ label: el.querySelector('.sec-label').value.trim(), blocks: textToBlocks(el.querySelector('textarea').value) })).filter(x => x.label && x.blocks.length),
+        risks: [...mainEl.querySelectorAll('[data-risk]')].map(tr => { const f = tr.querySelectorAll('textarea,input'); const L = Number(f[2].value) || 1, S = Number(f[3].value) || 1;
+          return { activity: f[0].value.trim(), hazards: f[1].value.trim(), likelihood: L, severity: S, rating: L * S, controls: f[4].value.trim(), by_whom: f[5].value.trim(), residual: Number(f[6].value) || 1, persons: f[7].value.trim() }; }).filter(x => x.activity),
+        coshh: [...mainEl.querySelectorAll('[data-coshh]')].map(el => ({ substance: el.querySelector('.c-sub').value.trim(), symbols: el.querySelector('.c-sym').value.split(',').map(x => x.trim()).filter(Boolean),
+          health_risks: el.querySelector('.c-hr').value.trim(), first_aid: el.querySelector('.c-fa').value.trim(), controls: el.querySelector('.c-ct').value.trim(), review: el.querySelector('.c-rv').value.trim() })).filter(x => x.substance),
+        pc_signoff_text: v('m-pc'), operative_signoff_text: v('m-op') };
+      try { const r = await api('/rams/master', { method: 'PUT', body: { body, note: v('m-note') } }); flash(`Saved as version ${r.version}.`); route(); } catch (e) { flash(e.message, 'err'); }
+    };
+    document.getElementById('save').onclick = save; document.getElementById('save2').onclick = save;
+  }
+
   async function settings() {
     if (!isOwner()) return setMain('<div class="note warn">This page is for Safety Simplified.</div>');
     const [acc, ts] = await Promise.all([api('/account'), types(true)]);
