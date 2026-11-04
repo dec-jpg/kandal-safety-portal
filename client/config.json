@@ -1070,7 +1070,7 @@
       "client": "Keepmoat Homes",
       "address": "Bannister Lane, Leyland",
       "start_on": "2026-03-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Bannister Lane",
@@ -1078,7 +1078,8 @@
           "revision": "2",
           "kind": "rams",
           "file": "Bannister Lane - RAMS Rev 2 (July 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         },
         {
           "title": "RAMS: Bannister Lane",
@@ -1086,7 +1087,8 @@
           "revision": "1",
           "kind": "rams",
           "file": "Bannister Lane - RAMS Rev 1 (March 2026).pdf",
-          "current": false
+          "current": false,
+          "requires_signoff": false
         }
       ]
     },
@@ -1096,7 +1098,7 @@
       "client": "Bellway Homes",
       "address": "Bridleway Grange, Bury, BL8 1QS",
       "start_on": "2026-02-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Bridleway Grange",
@@ -1104,7 +1106,8 @@
           "revision": "1",
           "kind": "rams",
           "file": "Bridleway Grange - RAMS Rev 1 (February 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1114,7 +1117,7 @@
       "client": "Bellway Homes",
       "address": "Beal Lane, Shaw, Oldham, OL2 8PH",
       "start_on": "2026-06-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Old Brook View Phase 1",
@@ -1122,7 +1125,8 @@
           "revision": "1",
           "kind": "rams",
           "file": "Old Brook View Phase 1 - RAMS Rev 1 (June 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1132,7 +1136,7 @@
       "client": "Bellway Homes",
       "address": "Beal Lane, Shaw, Oldham, OL2 8PH",
       "start_on": "2026-02-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Old Brook View Phase 2",
@@ -1140,7 +1144,8 @@
           "revision": "1",
           "kind": "rams",
           "file": "Old Brook View Phase 2 - RAMS Rev 1 (February 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1150,7 +1155,7 @@
       "client": "Bellway Homes",
       "address": "Royal Bowland Park, Westhoughton, BL5 3RE",
       "start_on": "2026-02-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Royal Bowland Park Phase 5",
@@ -1158,7 +1163,8 @@
           "revision": "1",
           "kind": "rams",
           "file": "Royal Bowland Park Phase 5 - RAMS Rev 1 (February 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1168,7 +1174,7 @@
       "client": "Bellway Homes",
       "address": "Off Brackley Lane, Little Hulton, Salford, M38 9XH",
       "start_on": "2026-02-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: The Putting Green at Brackley Village",
@@ -1176,7 +1182,8 @@
           "revision": "2",
           "kind": "rams",
           "file": "The Putting Green at Brackley Village - RAMS Rev 2 (February 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1186,7 +1193,7 @@
       "client": "Bellway Homes",
       "address": "Mosley Common Road, Mosley Common, Greater Manchester, M29 8PR",
       "start_on": "2026-02-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Trilogy",
@@ -1194,7 +1201,8 @@
           "revision": "0",
           "kind": "rams",
           "file": "Trilogy - RAMS Rev 0 (February 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1204,7 +1212,7 @@
       "client": "Jones Homes",
       "address": "Warmingham Park, Middlewich",
       "start_on": "2026-04-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Warmingham Park",
@@ -1212,7 +1220,8 @@
           "revision": "1",
           "kind": "rams",
           "file": "Warmingham Park - RAMS Rev 1 (April 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1222,7 +1231,7 @@
       "client": "Northstone",
       "address": "Windle, Edenfield",
       "start_on": "2026-04-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Windle, Edenfield",
@@ -1230,7 +1239,8 @@
           "revision": "1",
           "kind": "rams",
           "file": "Windle, Edenfield - RAMS Rev 1 (April 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     },
@@ -1240,7 +1250,7 @@
       "client": "Jones Homes",
       "address": "Woodhouse Gate, Failsworth",
       "start_on": "2026-10-01",
-      "team": "everyone",
+      "team": "nobody",
       "documents": [
         {
           "title": "RAMS: Woodhouse Gate, Failsworth",
@@ -1248,9 +1258,11 @@
           "revision": "2",
           "kind": "rams",
           "file": "Woodhouse Gate, Failsworth - RAMS Rev 2 (October 2026).pdf",
-          "current": true
+          "current": true,
+          "requires_signoff": false
         }
       ]
     }
-  ]
+  ],
+  "packs_version": "2026-11-04 view-only RAMS"
 }
